@@ -2,7 +2,7 @@
 
 > Identificar con anticipación qué clientes de tarjeta de crédito tienen más probabilidad de no pagar, para que el banco pueda decidir mejor a quién aprueba o aumenta el cupo y reducir sus pérdidas por cartera.
 
-## Equipo 1
+## Equipo_1
 
 | Integrante | Rol principal | GitHub |
 |---|---|---|
