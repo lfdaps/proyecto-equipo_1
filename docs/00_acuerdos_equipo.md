@@ -21,3 +21,12 @@
 - Las tareas se reparten al inicio de cada semana.
 - Cada integrante trabaja en su propio archivo para evitar conflictos.
 - Antes de subir cambios, cada uno hace `git pull`.
+- 
+## Herramientas
+- Lenguaje: Python 3.14
+- Gestor de entorno y librerías: uv
+- Editor: Visual Studio Code
+- Control de versiones: Git y GitHub
+- Librerías principales: pandas, scikit-learn
+- Notebooks: Jupyter (ipykernel)
+- Comunicación: WhatsApp y Teams
