@@ -15,13 +15,13 @@
 |---|---|---|
 | Luisa Fernanda | Piloto | Escribe el código principal y el README |
 | Christian Velez | Copiloto | Revisa el código y documenta los acuerdos |
-| Richard Bedoya | Relator | [ prepara la presentación y los scripts de prueba] |
+| Richard Bedoya | Relator |  prepara la presentación y los scripts de prueba |
 | Santiago Jaramillo | Relator | Revisa  la presentación y los scripts de prueba |
 
 - Las tareas se reparten al inicio de cada semana.
 - Cada integrante trabaja en su propio archivo para evitar conflictos.
 - Antes de subir cambios, cada uno hace `git pull`.
-- 
+  
 ## Herramientas
 - Lenguaje: Python 3.14
 - Gestor de entorno y librerías: uv
