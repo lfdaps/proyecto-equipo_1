@@ -31,6 +31,12 @@ El banco necesita saber, antes de la fecha de pago, qué clientes de tarjeta de 
 - **Variables:** cupo (LIMIT_BAL), sexo, educación, estado civil, edad, estado de pago de cada mes (PAY_0, PAY_2 a PAY_6), valor facturado (BILL_AMT1 a 6) y valor pagado (PAY_AMT1 a 6), en dólares taiwaneses.
 - **Archivos:** data/raw/default of credit card clients.xls (original) y data/raw/default_credit_card_clients.csv (el que usa el notebook, generado con src/convertir_a_csv.py). 
 
+## Hallazgos principales
+
+1. **El atraso reciente es la mejor señal:** con 2 meses de atraso en septiembre no paga el 69 % de los clientes, frente al 13 % de los que están al día.
+2. **Menos cupo, más incumplimiento:** el cupo mediano de quienes no pagan es 90.000 y el de quienes pagan es 150.000.
+3. **La edad casi no influye:** la mediana es de 34 años tanto en los que pagan como en los que no (rechazamos la hipótesis de que los jóvenes incumplen más).
+
 ## Cómo ejecutar
 
 Requisitos: tener instalados `git` y `uv`. En Windows (PowerShell):
@@ -71,7 +77,7 @@ proyecto-equipo_1/
 - [x] 00 Entorno con uv
 - [x] 01 Repositorio en GitHub
 - [x] 02 Problema y datos (secciones 0, 1 y 2 del notebook)
-- [ ] 03 Limpieza y EDA (secciones 3 y 4)
+- [x] 03 Limpieza y EDA (secciones 3 y 4)
 - [ ] 04 Modelo (sección 5)
 - [ ] Avance intermedio (4 de noviembre)
 - [ ] 05 Conclusiones y esquema de la presentación (sección 6)
