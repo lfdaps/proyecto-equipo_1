@@ -37,6 +37,18 @@ El banco necesita saber, antes de la fecha de pago, qué clientes de tarjeta de 
 2. **Menos cupo, más incumplimiento:** el cupo mediano de quienes no pagan es 90.000 y el de quienes pagan es 150.000.
 3. **La edad casi no influye:** la mediana es de 34 años tanto en los que pagan como en los que no (rechazamos la hipótesis de que los jóvenes incumplen más).
 
+## Resultados del modelo
+
+Métrica principal: *recall* de la clase "no paga" en los datos de prueba (de cada 100 clientes que no pagan, ¿a cuántos detectamos?).
+
+| Modelo | Recall (test) | F1 (test) |
+|---|---|---|
+| Baseline (siempre "paga") | 0,000 | 0,000 |
+| Regresión logística | 0,239 | 0,356 |
+| *Árbol de decisión (elegido)* | *0,372* | *0,476* |
+
+El árbol, con 8 variables, detecta a 37 de cada 100 clientes que no pagan, frente a ninguno del baseline, y no tiene overfitting. Todavía no alcanza el criterio de éxito (50 %): se le escapan sobre todo los clientes que venían al día en sus pagos.
+
 ## Cómo ejecutar
 
 Requisitos: tener instalados `git` y `uv`. En Windows (PowerShell):
@@ -78,7 +90,7 @@ proyecto-equipo_1/
 - [x] 01 Repositorio en GitHub
 - [x] 02 Problema y datos (secciones 0, 1 y 2 del notebook)
 - [x] 03 Limpieza y EDA (secciones 3 y 4)
-- [ ] 04 Modelo (sección 5)
+- [X] 04 Modelo (sección 5)
 - [ ] Avance intermedio (4 de noviembre)
 - [ ] 05 Conclusiones y esquema de la presentación (sección 6)
 - [ ] 06 Sustentación (25 de noviembre)
