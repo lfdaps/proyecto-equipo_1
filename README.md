@@ -47,7 +47,9 @@ Métrica principal: *recall* de la clase "no paga" en los datos de prueba (de ca
 | Regresión logística | 0,239 | 0,356 |
 | *Árbol de decisión (elegido)* | *0,372* | *0,476* |
 
-El árbol, con 8 variables, detecta a 37 de cada 100 clientes que no pagan, frente a ninguno del baseline, y no tiene overfitting. Todavía no alcanza el criterio de éxito (50 %): se le escapan sobre todo los clientes que venían al día en sus pagos.
+El árbol, con 8 variables, detecta a 37 de cada 100 clientes que no pagan, frente a ninguno del baseline, y no tiene *overfitting*. Con el umbral de 0,5 que usa `predict()` todavía no alcanza el criterio de éxito (50 %): se le escapan sobre todo los clientes que venían al día en sus pagos.
+
+**Umbral de decisión:** al bajar el umbral a **0,3**, el árbol detecta a 50 de cada 100 clientes que no pagan (recall 0,501, F1 0,516) y **cumple el criterio de éxito**, a cambio de más llamadas preventivas a clientes que sí pagan (585 falsas alarmas frente a 255). Límite: el umbral se eligió mirando los datos de prueba, así que el resultado puede ser un poco optimista.
 
 ## Cómo ejecutar
 
