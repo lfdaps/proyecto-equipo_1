@@ -49,7 +49,14 @@ Métrica principal: *recall* de la clase "no paga" en los datos de prueba (de ca
 
 El árbol, con 8 variables, detecta a 37 de cada 100 clientes que no pagan, frente a ninguno del baseline, y no tiene *overfitting*. Con el umbral de 0,5 que usa `predict()` todavía no alcanza el criterio de éxito (50 %): se le escapan sobre todo los clientes que venían al día en sus pagos.
 
-**Umbral de decisión:** al bajar el umbral a **0,3**, el árbol detecta a 50 de cada 100 clientes que no pagan (recall 0,501, F1 0,516) y **cumple el criterio de éxito**, a cambio de más llamadas preventivas a clientes que sí pagan (585 falsas alarmas frente a 255). Límite: el umbral se eligió mirando los datos de prueba, así que el resultado puede ser un poco optimista.
+**Umbral de decisión:** el umbral se eligió solo con los datos de entrenamiento, usando validación cruzada de 5 partes: se escogió el umbral más alto con un recall promedio de al menos 0,50, que fue **0,3**. Después se evaluó el test una sola vez: el árbol detecta a 50 de cada 100 clientes que no pagan (recall de 0,501 y F1 de 0,516) y **cumple el criterio de éxito**, a cambio de más llamadas preventivas a clientes que sí pagan (585 falsas alarmas frente a 255).
+
+## Límites del modelo
+
+- Casi no detecta a los clientes que venían al día y aun así no pagaron, que son la mitad de los que no pagan.
+- Los datos son de un banco de Taiwán en 2005; para usarlo en otro país o en otra época habría que revisarlo con datos nuevos.
+- Con clientes nuevos, el recall podría quedar un poco por debajo de 0,50 (en la validación cruzada varió ± 0,025).
+- Solo usa el cupo, los pagos, la educación y el estado civil; no conoce los ingresos ni el empleo del cliente.
 
 ## Cómo ejecutar
 
@@ -150,6 +157,7 @@ proyecto-equipo_1/
 - [x] 02 Problema y datos (secciones 0, 1 y 2 del notebook)
 - [x] 03 Limpieza y EDA (secciones 3 y 4)
 - [X] 04 Modelo (sección 5)
-- [ ] Avance intermedio (4 de noviembre)
-- [ ] 05 Conclusiones y esquema de la presentación (sección 6)
+- [x] Avance intermedio (4 de noviembre)
+- [x] 05 Conclusiones (sección 6)
+- [x] API con FastAPI y pruebas
 - [ ] 06 Sustentación (25 de noviembre)
