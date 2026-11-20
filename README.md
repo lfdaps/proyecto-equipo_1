@@ -66,6 +66,61 @@ Luego se abre `notebooks/proyecto_equipo.ipynb`, se elige el kernel `.venv` y se
 
 > El dataset ya está en `data/raw/` como CSV. Solo si hay que regenerarlo desde el Excel original: `uv run python src/convertir_a_csv.py`.
 
+## API
+
+La API recibe los datos de un cliente y responde si probablemente no pagará el mes siguiente. Usa el modelo guardado en models/modelo.joblib (se genera al ejecutar el notebook completo) y aplica el umbral de 0,3 elegido en la sección 5.6.
+
+Para encenderla:
+
+powershell
+uv run uvicorn api.main:app --reload
+
+
+Luego se abre http://127.0.0.1:8000/docs para probarla desde el navegador.
+
+| Endpoint | Para qué sirve |
+|---|---|
+| GET /health | Dice si la API está funcionando y si cargó el modelo |
+| GET /model-info | Muestra la versión del modelo y el umbral |
+| POST /predict | Recibe los datos de un cliente y devuelve la clase, la probabilidad y el umbral |
+
+Ejemplo de solicitud a /predict:
+
+json
+{
+  "LIMIT_BAL": 50000,
+  "PAY_1": 2,
+  "PAY_2": 2,
+  "PAY_3": 0,
+  "PAY_AMT1": 0,
+  "PAY_AMT2": 1500,
+  "EDUCATION": "universidad",
+  "MARRIAGE": "soltero"
+}
+
+
+Respuesta:
+
+json
+{
+  "clase": "no paga",
+  "probabilidad_no_pago": 0.735,
+  "umbral": 0.3,
+  "version_modelo": "notebook"
+}
+
+
+| Código | Significa | Cuándo pasa |
+|---|---|---|
+| 200 | Todo bien | La predicción se hizo |
+| 422 | Datos inválidos | Falta un dato, el tipo es incorrecto o el valor no tiene sentido (por ejemplo, cupo negativo o un nivel educativo que no existe) |
+| 503 | Servicio no disponible | No se encontró el modelo; hay que ejecutar el notebook primero |
+
+Para ejecutar las pruebas automáticas:
+
+powershell
+uv run python -m pytest -v
+
 ## Estructura
 
 ```
@@ -81,6 +136,8 @@ proyecto-equipo_1/
 │   └── proyecto_equipo.ipynb     ← el proyecto completo
 ├── src/
 │   └── convertir_a_csv.py        ← convierte el .xls a CSV (se ejecuta una vez)
+├── api/                          ← la API (FastAPI): main.py, schemas.py, modelo.py, config.py
+├── tests/                        ← pruebas automáticas de la API
 ├── docs/
 │   └── 00_acuerdos_equipo.md     ← acuerdos del equipo
 └── models/                       ← modelo guardado (lo genera el notebook; no se sube)
