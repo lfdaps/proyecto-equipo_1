@@ -80,3 +80,17 @@ def test_datos_invalidos_422(cliente, cambio):
 def test_campo_faltante_422(cliente):
     incompleto = {k: v for k, v in EJEMPLO_CLIENTE.items() if k != "LIMIT_BAL"}
     assert cliente.post("/predict", json=incompleto).status_code == 422
+
+@requiere_modelo
+def test_batch_devuelve_una_prediccion_por_cliente(cliente):
+    lote = {"clientes": [EJEMPLO_CLIENTE, CLIENTE_AL_DIA, EJEMPLO_CLIENTE]}
+    respuesta = cliente.post("/predict/batch", json=lote)
+    assert respuesta.status_code == 200
+    cuerpo = respuesta.json()
+    assert cuerpo["cantidad"] == 3
+    assert cuerpo["predicciones"][0]["clase"] == "no paga"
+    assert cuerpo["predicciones"][1]["clase"] == "paga"
+
+
+def test_batch_vacio_422(cliente):
+    assert cliente.post("/predict/batch", json={"clientes": []}).status_code == 422    
