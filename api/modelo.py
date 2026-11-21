@@ -23,7 +23,7 @@ class ServicioModelo:
         if not ruta_modelo.exists():
             raise ModeloNoDisponible(
                 f"No se encontró el modelo en {ruta_modelo}. "
-                "Genéralo ejecutando el notebook completo (sección 6.1)."
+                "Genéralo con: uv run python -m src.train"
             )
         self.pipeline = joblib.load(ruta_modelo)
         self.metadata = json.loads(ruta_metadata.read_text(encoding="utf-8")) if ruta_metadata.exists() else {}
