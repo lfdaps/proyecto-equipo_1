@@ -90,6 +90,7 @@ Luego se abre http://127.0.0.1:8000/docs para probarla desde el navegador.
 | GET /health | Dice si la API está funcionando y si cargó el modelo |
 | GET /model-info | Muestra la versión del modelo y el umbral |
 | POST /predict | Recibe los datos de un cliente y devuelve la clase, la probabilidad y el umbral |
+| POST /predict/batch | Recibe una lista de clientes (máximo 100) y devuelve una predicción por cliente, en el mismo orden |
 
 Ejemplo de solicitud a /predict:
 
@@ -121,6 +122,7 @@ json
 |---|---|---|
 | 200 | Todo bien | La predicción se hizo |
 | 422 | Datos inválidos | Falta un dato, el tipo es incorrecto o el valor no tiene sentido (por ejemplo, cupo negativo o un nivel educativo que no existe) |
+| 413 | Solicitud demasiado grande | Se mandaron más de 100 clientes a /predict/batch |
 | 503 | Servicio no disponible | No se encontró el modelo; hay que ejecutar el notebook primero |
 
 Para ejecutar las pruebas automáticas:
