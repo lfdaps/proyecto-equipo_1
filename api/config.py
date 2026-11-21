@@ -17,3 +17,6 @@ METADATA_PATH = MODEL_PATH.with_suffix(".json")
 # Umbral elegido con validación cruzada en la sección 5.6 del notebook.
 # Si existe models/modelo.json con un "umbral", se usa ese valor (lo agregará train.py).
 UMBRAL_POR_DEFECTO = 0.3
+
+# Máximo de clientes por petición en /predict/batch (como MAX_BATCH en la API del módulo 08)
+MAX_BATCH = 100

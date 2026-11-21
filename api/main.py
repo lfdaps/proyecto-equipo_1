@@ -18,7 +18,7 @@ from fastapi import FastAPI, HTTPException
 
 from api import config
 from api.modelo import ModeloNoDisponible, ServicioModelo
-from api.schemas import ClienteEntrada, PrediccionSalida
+from api.schemas import ClienteEntrada, LoteEntrada, LoteSalida, PrediccionSalida
 
 estado: dict = {"servicio": None, "error": None}
 
@@ -79,3 +79,17 @@ def predict(cliente: ClienteEntrada) -> PrediccionSalida:
         umbral=servicio.umbral,
         version_modelo=servicio.version,
     )
+
+
+@app.post("/predict/batch", response_model=LoteSalida, tags=["Predicción"])
+def predict_batch(lote: LoteEntrada) -> LoteSalida:
+    """Estima el riesgo de varios clientes en una sola petición (máximo config.MAX_BATCH)."""
+    servicio = obtener_servicio()
+    if len(lote.clientes) > config.MAX_BATCH:
+        raise HTTPException(status_code=413, detail=f"Máximo {config.MAX_BATCH} clientes por petición")
+    resultados = servicio.predecir_lote(lote.clientes)
+    predicciones = [
+        PrediccionSalida(clase=clase, probabilidad_no_pago=prob, umbral=servicio.umbral, version_modelo=servicio.version)
+        for clase, prob in resultados
+    ]
+    return LoteSalida(predicciones=predicciones, cantidad=len(predicciones))

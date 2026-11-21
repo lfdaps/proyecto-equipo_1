@@ -36,3 +36,12 @@ class ServicioModelo:
         probabilidad = float(self.pipeline.predict_proba(datos)[0, 1])
         clase = "no paga" if probabilidad >= self.umbral else "paga"
         return clase, round(probabilidad, 3)
+
+
+
+
+    def predecir_lote(self, clientes: list[ClienteEntrada]) -> list[tuple[str, float]]:
+        """Igual que predecir(), pero para varios clientes a la vez (una sola llamada al modelo)."""
+        datos = pd.DataFrame([cliente.model_dump() for cliente in clientes])
+        probabilidades = self.pipeline.predict_proba(datos)[:, 1]
+        return [("no paga" if p >= self.umbral else "paga", round(float(p), 3)) for p in probabilidades]

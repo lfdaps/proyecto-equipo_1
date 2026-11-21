@@ -45,3 +45,16 @@ class PrediccionSalida(BaseModel):
     probabilidad_no_pago: float = Field(description="Probabilidad (0 a 1) de que el cliente no pague el mes siguiente")
     umbral: float = Field(description="Si la probabilidad es mayor o igual al umbral, la clase es 'no paga'")
     version_modelo: str
+
+
+class LoteEntrada(BaseModel):
+    """Entrada de /predict/batch: una lista de clientes."""
+
+    clientes: list[ClienteEntrada] = Field(min_length=1)
+
+
+class LoteSalida(BaseModel):
+    """Respuesta de /predict/batch: una predicción por cliente, en el mismo orden."""
+
+    predicciones: list[PrediccionSalida]
+    cantidad: int
