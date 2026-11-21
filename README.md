@@ -73,28 +73,48 @@ Luego se abre `notebooks/proyecto_equipo.ipynb`, se elige el kernel `.venv` y se
 
 > El dataset ya está en `data/raw/` como CSV. Solo si hay que regenerarlo desde el Excel original: `uv run python src/convertir_a_csv.py`.
 
+### Cómo entrenar el modelo
+
+El modelo que usa la API se entrena con un solo comando, sin abrir el notebook:
+
+```powershell
+uv run python -m src.train
+```
+
+Este comando (`src/train.py`) hace lo mismo que las secciones 3 y 5 del notebook, en orden:
+
+1. Carga el CSV y lo limpia con `src/limpieza.py`, con las mismas reglas de la sección 3.
+2. Separa 80 % para entrenamiento y 20 % para prueba, de forma estratificada y con semilla 42.
+3. Busca la profundidad del árbol y el tamaño mínimo de las hojas con `GridSearchCV`, usando solo el entrenamiento (5 partes) y eligiendo por recall. El mejor resultado fue una profundidad de 5.
+4. Evalúa una sola vez en prueba con el umbral 0,3: recall de 0,501, así que cumple el criterio de éxito.
+5. Vuelve a entrenar con los 30.000 clientes y guarda dos archivos en `models/`:
+   - `modelo.joblib`: el pipeline completo (preprocesamiento y árbol), que es lo que carga la API.
+   - `modelo.json`: versión, fecha, variables, hiperparámetros, umbral y métricas de prueba.
+
+Tarda unos 10 segundos. Ninguno de los dos archivos se sube a GitHub, porque se pueden volver a generar con este comando.
+
 ## API
 
-La API recibe los datos de un cliente y responde si probablemente no pagará el mes siguiente. Usa el modelo guardado en models/modelo.joblib (se genera al ejecutar el notebook completo) y aplica el umbral de 0,3 elegido en la sección 5.6.
+La API recibe los datos de un cliente y responde si probablemente no pagará el mes siguiente. Usa el modelo guardado en `models/modelo.joblib` y el umbral de 0,3 guardado en `models/modelo.json`; los dos se generan con `uv run python -m src.train`.
 
 Para encenderla:
 
-powershell
+```powershell
 uv run uvicorn api.main:app --reload
-
+```
 
 Luego se abre http://127.0.0.1:8000/docs para probarla desde el navegador.
 
 | Endpoint | Para qué sirve |
 |---|---|
-| GET /health | Dice si la API está funcionando y si cargó el modelo |
-| GET /model-info | Muestra la versión del modelo y el umbral |
-| POST /predict | Recibe los datos de un cliente y devuelve la clase, la probabilidad y el umbral |
-| POST /predict/batch | Recibe una lista de clientes (máximo 100) y devuelve una predicción por cliente, en el mismo orden |
+| `GET /health` | Dice si la API está funcionando y si cargó el modelo |
+| `GET /model-info` | Muestra la versión del modelo y el umbral |
+| `POST /predict` | Recibe los datos de un cliente y devuelve la clase, la probabilidad y el umbral |
+| `POST /predict/batch` | Recibe una lista de clientes (máximo 100) y devuelve una predicción por cliente, en el mismo orden |
 
-Ejemplo de solicitud a /predict:
+Ejemplo de solicitud a `/predict`:
 
-json
+```json
 {
   "LIMIT_BAL": 50000,
   "PAY_1": 2,
@@ -105,30 +125,32 @@ json
   "EDUCATION": "universidad",
   "MARRIAGE": "soltero"
 }
-
+```
 
 Respuesta:
 
-json
+```json
 {
   "clase": "no paga",
-  "probabilidad_no_pago": 0.735,
+  "probabilidad_no_pago": 0.73,
   "umbral": 0.3,
-  "version_modelo": "notebook"
+  "version_modelo": "1.0.0"
 }
+```
 
 
 | Código | Significa | Cuándo pasa |
 |---|---|---|
 | 200 | Todo bien | La predicción se hizo |
 | 422 | Datos inválidos | Falta un dato, el tipo es incorrecto o el valor no tiene sentido (por ejemplo, cupo negativo o un nivel educativo que no existe) |
-| 413 | Solicitud demasiado grande | Se mandaron más de 100 clientes a /predict/batch |
-| 503 | Servicio no disponible | No se encontró el modelo; hay que ejecutar el notebook primero |
+| 413 | Solicitud demasiado grande | Se mandaron más de 100 clientes a `/predict/batch` |
+| 503 | Servicio no disponible | No se encontró el modelo; hay que ejecutar `uv run python -m src.train` primero |
 
 Para ejecutar las pruebas automáticas:
 
-powershell
+```powershell
 uv run python -m pytest -v
+```
 
 ## Estructura
 
@@ -144,12 +166,14 @@ proyecto-equipo_1/
 ├── notebooks/
 │   └── proyecto_equipo.ipynb     ← el proyecto completo
 ├── src/
-│   └── convertir_a_csv.py        ← convierte el .xls a CSV (se ejecuta una vez)
+│   ├── convertir_a_csv.py        ← convierte el .xls a CSV (se ejecuta una vez)
+│   ├── limpieza.py               ← las reglas de limpieza del notebook, como funciones
+│   └── train.py                  ← entrena el modelo y guarda modelo.joblib y modelo.json
 ├── api/                          ← la API (FastAPI): main.py, schemas.py, modelo.py, config.py
 ├── tests/                        ← pruebas automáticas de la API
 ├── docs/
 │   └── 00_acuerdos_equipo.md     ← acuerdos del equipo
-└── models/                       ← modelo guardado (lo genera el notebook; no se sube)
+└── models/                       ← modelo.joblib y modelo.json (los genera src/train.py; no se suben)
 ```
 
 ## Avance
@@ -158,8 +182,9 @@ proyecto-equipo_1/
 - [x] 01 Repositorio en GitHub
 - [x] 02 Problema y datos (secciones 0, 1 y 2 del notebook)
 - [x] 03 Limpieza y EDA (secciones 3 y 4)
-- [X] 04 Modelo (sección 5)
+- [x] 04 Modelo (sección 5)
 - [x] Avance intermedio (4 de noviembre)
 - [x] 05 Conclusiones (sección 6)
+- [x] Pipeline de entrenamiento (`src/train.py`)
 - [x] API con FastAPI y pruebas
 - [ ] 06 Sustentación (25 de noviembre)
